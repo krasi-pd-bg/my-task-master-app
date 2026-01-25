@@ -290,15 +290,15 @@ Root Navigator (AppNavigator)
 
 #### Day 1: Project Setup (Feb 19)
 - [x] Create Expo project: `npx create-expo-app my-task-master-app`
-- [ ] Initialize Git repository
-- [ ] Create GitHub repo (public)
+- [x] Initialize Git repository
+- [x] Create GitHub repo (public)
 - [x] Install core dependencies
 - [x] Setup project structure (folders)
 - [ ] Configure app.json (name, icons, splash screen)
 - **Commit 1:** `"Initial project setup with folder structure"`
 
 #### Day 2: Navigation Setup (Feb 20)
-- [ ] Install navigation packages
+- [x] Install navigation packages
 - [ ] Create AuthStack.js (Welcome, Login, Register screens - empty)
 - [ ] Create MainStack.js with TabNavigator
 - [ ] Create 5 empty screen components
