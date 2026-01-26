@@ -299,10 +299,10 @@ Root Navigator (AppNavigator)
 
 #### Day 2: Navigation Setup (Feb 20)
 - [x] Install navigation packages
-- [ ] Create AuthStack.js (Welcome, Login, Register screens - empty)
-- [ ] Create MainStack.js with TabNavigator
+- [x] Create AuthStack.js (Welcome, Login, Register screens - empty)
+- [x] Create MainStack.js with TabNavigator
 - [ ] Create 5 empty screen components
-- [ ] Setup AppNavigator with conditional rendering
+- [x] Setup AppNavigator with conditional rendering
 - [ ] Test navigation flow between screens
 - **Commit 2:** `"Setup navigation structure with all screens"`
 
