@@ -1,9 +1,449 @@
-import { View, Text } from 'react-native';
+// import React, { useState } from 'react';
+// import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+// import { Ionicons } from '@expo/vector-icons';
+// import AddCategoryModal from '../components/AddCategoryModal';
+
+// export default function CategoriesScreen() {
+
+//   const [categories, setCategories] = useState([
+//     { id: 1, name: "Work", icon: "briefcase-outline", color: "#4A90E2" },
+//     { id: 2, name: "Personal", icon: "person-outline", color: "#E24A4A" },
+//     { id: 3, name: "Study", icon: "book-outline", color: "#8E44AD" },
+//     { id: 4, name: "Shopping", icon: "cart-outline", color: "#27AE60" },
+//     { id: 5, name: "Health", icon: "heart-outline", color: "#E67E22" },
+//   ]);
+
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+//   const [selectedCategory, setSelectedCategory] = useState(null);
+
+//   // Add Category (UI only)
+//   const handleSaveCategory = (newCat) => {
+//     const newCategory = {
+//       id: Date.now(),
+//       name: newCat.name,
+//       icon: newCat.icon,
+//       color: newCat.color,
+//     };
+
+//     setCategories((prev) => [...prev, newCategory]);
+//     setIsModalOpen(false);
+//   };
+
+//   // Delete Category (UI only)
+//   const handleDeleteCategory = () => {
+//     setCategories((prev) => prev.filter((c) => c.id !== selectedCategory.id));
+//     setIsActionModalOpen(false);
+//   };
+
+//   // Edit Category (UI only)
+//   const handleEditCategory = () => {
+//     // Later we will open AddCategoryModal in EDIT mode
+//     // For now only close the action modal
+//     setIsActionModalOpen(false);
+//   };
+
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <ScrollView contentContainerStyle={styles.container}>
+
+//         <Text style={styles.heading}>Categories</Text>
+
+//         <View style={styles.grid}>
+//           {categories.map((cat) => (
+//             <TouchableOpacity
+//               key={cat.id}
+//               style={styles.card}
+//               onLongPress={() => {
+//                 setSelectedCategory(cat);
+//                 setIsActionModalOpen(true);
+//               }}
+//             >
+//               <View style={[styles.iconWrapper, { backgroundColor: cat.color }]}>
+//                 <Ionicons name={cat.icon} size={26} color="#fff" />
+//               </View>
+//               <Text style={styles.cardText}>{cat.name}</Text>
+//             </TouchableOpacity>
+//           ))}
+//         </View>
+
+//       </ScrollView>
+
+//       {/* Floating Add Button */}
+//       <TouchableOpacity
+//         style={styles.addButton}
+//         onPress={() => setIsModalOpen(true)}
+//       >
+//         <Ionicons name="add" size={32} color="#fff" />
+//       </TouchableOpacity>
+
+//       {/* Add Category Modal */}
+//       <AddCategoryModal
+//         visible={isModalOpen}
+//         onClose={() => setIsModalOpen(false)}
+//         onSave={handleSaveCategory}
+//       />
+
+//       {/* Action Modal (Edit / Delete) */}
+//       <Modal visible={isActionModalOpen} transparent animationType="fade">
+//         <View style={styles.actionOverlay}>
+//           <View style={styles.actionBox}>
+//             <Text style={styles.actionTitle}>{selectedCategory?.name}</Text>
+
+//             <TouchableOpacity style={styles.actionBtn} onPress={handleEditCategory}>
+//               <Ionicons name="create-outline" size={22} color="#4A90E2" />
+//               <Text style={styles.actionText}>Edit</Text>
+//             </TouchableOpacity>
+
+//             <TouchableOpacity style={styles.actionBtn} onPress={handleDeleteCategory}>
+//               <Ionicons name="trash-outline" size={22} color="#E24A4A" />
+//               <Text style={styles.actionText}>Delete</Text>
+//             </TouchableOpacity>
+
+//             <TouchableOpacity
+//               style={[styles.actionBtn, { marginTop: 10 }]}
+//               onPress={() => setIsActionModalOpen(false)}
+//             >
+//               <Text style={[styles.actionText, { color: "#555" }]}>Cancel</Text>
+//             </TouchableOpacity>
+
+//           </View>
+//         </View>
+//       </Modal>
+
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     padding: 20,
+//     paddingBottom: 80,
+//   },
+
+//   heading: {
+//     fontSize: 26,
+//     fontWeight: '700',
+//     marginBottom: 20,
+//   },
+
+//   grid: {
+//     flexDirection: 'row',
+//     flexWrap: 'wrap',
+//     justifyContent: 'space-between',
+//   },
+
+//   card: {
+//     width: '48%',
+//     backgroundColor: '#fff',
+//     borderRadius: 12,
+//     paddingVertical: 20,
+//     paddingHorizontal: 10,
+//     marginBottom: 15,
+//     borderWidth: 1,
+//     borderColor: '#ddd',
+//     alignItems: 'center',
+//   },
+
+//   iconWrapper: {
+//     width: 55,
+//     height: 55,
+//     borderRadius: 30,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginBottom: 10,
+//   },
+
+//   cardText: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//     color: '#333',
+//   },
+
+//   addButton: {
+//     position: 'absolute',
+//     bottom: 25,
+//     right: 25,
+//     backgroundColor: '#4A90E2',
+//     width: 60,
+//     height: 60,
+//     borderRadius: 30,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     elevation: 5,
+//   },
+
+//   /* Action Modal */
+//   actionOverlay: {
+//     flex: 1,
+//     backgroundColor: "rgba(0,0,0,0.4)",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   actionBox: {
+//     width: "75%",
+//     backgroundColor: "#fff",
+//     borderRadius: 14,
+//     padding: 20,
+//     alignItems: "center",
+//   },
+//   actionTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     marginBottom: 20,
+//   },
+//   actionBtn: {
+//     width: "100%",
+//     paddingVertical: 12,
+//     flexDirection: "row",
+//     alignItems: "center",
+//   },
+//   actionText: {
+//     fontSize: 16,
+//     marginLeft: 10,
+//     fontWeight: "600",
+//     color: "#333",
+//   },
+// });
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import AddCategoryModal from '../components/AddCategoryModal';
 
 export default function CategoriesScreen() {
+
+  const [categories, setCategories] = useState([
+    { id: 1, name: "Work", icon: "briefcase-outline", color: "#4A90E2" },
+    { id: 2, name: "Personal", icon: "person-outline", color: "#E24A4A" },
+    { id: 3, name: "Study", icon: "book-outline", color: "#8E44AD" },
+    { id: 4, name: "Shopping", icon: "cart-outline", color: "#27AE60" },
+    { id: 5, name: "Health", icon: "heart-outline", color: "#E67E22" },
+  ]);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // ADD CATEGORY (UI only)
+  const handleSaveCategory = (newCat) => {
+    const newCategory = {
+      id: Date.now(),
+      name: newCat.name,
+      icon: newCat.icon,
+      color: newCat.color,
+    };
+
+    setCategories((prev) => [...prev, newCategory]);
+    setIsAddModalOpen(false);
+  };
+
+  // DELETE CATEGORY (UI only)
+  const handleDeleteCategory = () => {
+    setCategories((prev) => prev.filter((c) => c.id !== selectedCategory.id));
+    setIsActionModalOpen(false);
+  };
+
+  // EDIT CATEGORY (UI only)
+  const handleEditCategory = () => {
+    setIsActionModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  // SAVE EDITED CATEGORY
+  const handleSaveEditedCategory = (updatedCat) => {
+    setCategories((prev) =>
+      prev.map((c) =>
+        c.id === selectedCategory.id
+          ? { ...c, ...updatedCat }
+          : c
+      )
+    );
+
+    setIsEditModalOpen(false);
+  };
+
   return (
-    <View>
-        <Text>Categories Screen</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+
+        <Text style={styles.heading}>Categories</Text>
+        <Text style={styles.hintText}>
+        Long press for more ...
+      </Text>
+
+        <View style={styles.grid}>
+          {categories.map((cat) => (
+            <TouchableOpacity
+              key={cat.id}
+              style={styles.card}
+              onLongPress={() => {
+                setSelectedCategory(cat);
+                setIsActionModalOpen(true);
+              }}
+            >
+              <View style={[styles.iconWrapper, { backgroundColor: cat.color }]}>
+                <Ionicons name={cat.icon} size={26} color="#fff" />
+              </View>
+              <Text style={styles.cardText}>{cat.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+      </ScrollView>
+
+      {/* Floating Add Button */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setIsAddModalOpen(true)}
+      >
+        <Ionicons name="add" size={32} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Add Category Modal */}
+      <AddCategoryModal
+        visible={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleSaveCategory}
+        editMode={false}
+      />
+
+      {/* Edit Category Modal */}
+      <AddCategoryModal
+        visible={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveEditedCategory}
+        editMode={true}
+        initialData={selectedCategory}
+      />
+
+      {/* Action Modal (Edit / Delete) */}
+      <Modal visible={isActionModalOpen} transparent animationType="fade">
+        <View style={styles.actionOverlay}>
+          <View style={styles.actionBox}>
+            <Text style={styles.actionTitle}>{selectedCategory?.name}</Text>
+
+            <TouchableOpacity style={styles.actionBtn} onPress={handleEditCategory}>
+              <Ionicons name="create-outline" size={22} color="#4A90E2" />
+              <Text style={styles.actionText}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionBtn} onPress={handleDeleteCategory}>
+              <Ionicons name="trash-outline" size={22} color="#E24A4A" />
+              <Text style={styles.actionText}>Delete</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionBtn, { marginTop: 10 }]}
+              onPress={() => setIsActionModalOpen(false)}
+            >
+              <Text style={[styles.actionText, { color: "#555" }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    paddingBottom: 80,
+  },
+
+  heading: {
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 5,
+  },
+
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+
+  card: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    alignItems: 'center',
+  },
+
+  iconWrapper: {
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  cardText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+
+  addButton: {
+    position: 'absolute',
+    bottom: 25,
+    right: 25,
+    backgroundColor: '#4A90E2',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+  },
+
+  /* Action Modal */
+  actionOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  actionBox: {
+    width: "75%",
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 20,
+    alignItems: "center",
+  },
+  actionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 20,
+  },
+  actionBtn: {
+    width: "100%",
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  actionText: {
+    fontSize: 16,
+    marginLeft: 10,
+    fontWeight: "600",
+    color: "#333",
+  },
+  hintText: {
+    paddingLeft: 20,
+    textAlign: 'left',
+    fontSize: 13,
+    color: '#777',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+
+});
