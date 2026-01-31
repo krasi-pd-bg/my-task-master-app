@@ -4,8 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
 import CreateTaskScreen from "../screens/CreateTaskScreen";
-import DetailsTaskScreen from "../screens/DetailsTaskScreen";
-import EditTaskScreen from "../screens/EditTaskScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -51,21 +51,12 @@ export default function BottomTabsNavigator() {
                 }}
             />
             <Tab.Screen
-                name="Details"
-                component={DetailsTaskScreen}
+                name="Profile"
+                component={ProfileScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => <Ionicons name="information-circle-outline" size={size} color={color} />,
-                    tabBarLabel: "Details",
-                    headerShown: true,
-                }}
-            />
-            <Tab.Screen
-                name="EditTask"
-                component={EditTaskScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => <Ionicons name="create-outline" size={size} color={color} />,
-                    tabBarLabel: "Edit Task",
-                    headerShown: true,
+                    tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+                    tabBarLabel: "Profile",
+                    headerShown: false,
                 }}
             />
 
