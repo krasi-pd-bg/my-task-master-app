@@ -225,7 +225,7 @@ Root Navigator (AppNavigator)
      ├── TabNavigator
      │   ├── HomeTab → TaskListScreen
      │   ├── CategoriesTab → CategoriesScreen
-     │   ├── StatisticsTab → StatisticsScreen
+     │   ├── CreateNewTaskTab → CreateTaskScreen
      │   └── ProfileTab → ProfileScreen
      │
      └── Modal/Stack Screens
