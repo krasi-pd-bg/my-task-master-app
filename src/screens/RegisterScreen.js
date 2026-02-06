@@ -1,16 +1,18 @@
 import React, { useState, useRef } from "react";
 import {
-View,
-Text,
-StyleSheet,
-TextInput,
-TouchableOpacity,
-Alert,
-ActivityIndicator,
+	View,
+	Text,
+	StyleSheet,
+	TextInput,
+	TouchableOpacity,
+	Alert,
+	ActivityIndicator,
+	Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useUserContext } from "../contexts/user/UserContext";
+import * as ImagePicker from "expo-image-picker"; // НОВО: Импортираме библиотеката
 
 export default function RegisterScreen({ navigation }) {
 	const [formData, setFormData] = useState({
@@ -23,6 +25,8 @@ export default function RegisterScreen({ navigation }) {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [profileImage, setProfileImage] = useState(null); // НОВО: Държим избраната снимка
+
 	const { login } = useUserContext();
 
 	const emailRef = useRef(null);
@@ -36,6 +40,94 @@ export default function RegisterScreen({ navigation }) {
 	const validateEmail = (value) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(value);
+	};
+
+	// НОВА ФУНКЦИЯ: Избор на снимка от галерията
+	const pickImageFromGallery = async () => {
+		try {
+			// 1. Искаме разрешение за достъп до галерията
+			const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+			if (!permissionResult.granted) {
+				Alert.alert(
+					"Permission Required",
+					"Please allow access to your photos to select a profile picture.",
+					[{ text: "OK" }]
+				);
+				return;
+			}
+
+			// 2. Отваряме галерията
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ['images'], // ПРОМЕНЕНО
+				allowsEditing: true,
+				aspect: [1, 1],
+				quality: 0.7,
+			});
+
+			// 3. Ако потребителят не е отказал
+			if (!result.canceled) {
+				setProfileImage(result.assets[0].uri); // Запазваме пътя към снимката
+			}
+		} catch (error) {
+			console.error("Error picking image:", error);
+			Alert.alert("Error", "Failed to pick image. Please try again.");
+		}
+	};
+
+	// НОВА ФУНКЦИЯ: Заснемане на снимка с камерата
+	const takePhoto = async () => {
+		try {
+			// 1. Искаме разрешение за камера
+			const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+			if (!permissionResult.granted) {
+				Alert.alert(
+					"Permission Required",
+					"Please allow access to your camera to take a profile picture.",
+					[{ text: "OK" }]
+				);
+				return;
+			}
+
+			// 2. Отваряме камерата
+			const result = await ImagePicker.launchCameraAsync({
+				mediaTypes: ['images'], // ПРОМЕНЕНО (ако го имаш тук)
+				allowsEditing: true,
+				aspect: [1, 1],
+				quality: 0.7,
+			});
+
+			// 3. Ако е заснел снимка
+			if (!result.canceled) {
+				setProfileImage(result.assets[0].uri);
+			}
+		} catch (error) {
+			console.error("Error taking photo:", error);
+			Alert.alert("Error", "Failed to take photo. Please try again.");
+		}
+	};
+
+	// НОВА ФУНКЦИЯ: Показва опции - камера или галерия
+	const showImageOptions = () => {
+		Alert.alert(
+			"Profile Picture",
+			"Choose an option",
+			[
+				{
+					text: "Take Photo",
+					onPress: takePhoto,
+				},
+				{
+					text: "Choose from Gallery",
+					onPress: pickImageFromGallery,
+				},
+				{
+					text: "Cancel",
+					style: "cancel",
+				},
+			]
+		);
 	};
 
 	const registerHandler = () => {
@@ -93,7 +185,8 @@ export default function RegisterScreen({ navigation }) {
 					{
 						text: "OK",
 						onPress: () => {
-							login(name, email, "newUserId"); // Логваме потребителя след регистрация
+							// ПРОМЕНЕНО: Сега подаваме и profileImage
+							login(name, email, "newUserId", profileImage);
 						},
 					},
 				]
@@ -122,6 +215,44 @@ export default function RegisterScreen({ navigation }) {
 				<Ionicons name="checkmark-done-circle" size={70} color="#4A90E2" />
 				<Text style={styles.title}>Create Account</Text>
 				<Text style={styles.subtitle}>Sign up to get started</Text>
+			</View>
+
+			{/* НОВО: Профилна снимка секция */}
+			<View style={styles.profileImageContainer}>
+				<Text style={styles.label}>Profile Picture (Optional)</Text>
+
+				<View style={styles.imagePickerWrapper}>
+					{profileImage ? (
+						// Ако има избрана снимка - показваме я
+						<View style={styles.imagePreviewContainer}>
+							<Image source={{ uri: profileImage }} style={styles.imagePreview} />
+							<TouchableOpacity
+								style={styles.changeImageButton}
+								onPress={showImageOptions}
+								disabled={loading}
+							>
+								<Ionicons name="camera" size={20} color="#fff" />
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.removeImageButton}
+								onPress={() => setProfileImage(null)}
+								disabled={loading}
+							>
+								<Ionicons name="close-circle" size={24} color="#E74C3C" />
+							</TouchableOpacity>
+						</View>
+					) : (
+						// Ако няма снимка - показваме бутон за избор
+						<TouchableOpacity
+							style={styles.addImageButton}
+							onPress={showImageOptions}
+							disabled={loading}
+						>
+							<Ionicons name="camera-outline" size={40} color="#4A90E2" />
+							<Text style={styles.addImageText}>Add Photo</Text>
+						</TouchableOpacity>
+					)}
+				</View>
 			</View>
 
 			{/* Name */}
@@ -300,6 +431,69 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: "#666",
 		marginTop: 5,
+	},
+
+	// НОВИ СТИЛОВЕ: За профилната снимка
+	profileImageContainer: {
+		marginBottom: 20,
+		alignItems: "center",
+	},
+
+	imagePickerWrapper: {
+		marginTop: 10,
+	},
+
+	addImageButton: {
+		width: 120,
+		height: 120,
+		borderRadius: 60,
+		borderWidth: 2,
+		borderColor: "#4A90E2",
+		borderStyle: "dashed",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#F0F8FF",
+	},
+
+	addImageText: {
+		marginTop: 8,
+		fontSize: 14,
+		color: "#4A90E2",
+		fontWeight: "600",
+	},
+
+	imagePreviewContainer: {
+		position: "relative",
+	},
+
+	imagePreview: {
+		width: 120,
+		height: 120,
+		borderRadius: 60,
+		borderWidth: 3,
+		borderColor: "#4A90E2",
+	},
+
+	changeImageButton: {
+		position: "absolute",
+		bottom: 0,
+		right: 0,
+		backgroundColor: "#4A90E2",
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 2,
+		borderColor: "#fff",
+	},
+
+	removeImageButton: {
+		position: "absolute",
+		top: -5,
+		right: -5,
+		backgroundColor: "#fff",
+		borderRadius: 12,
 	},
 
 	inputContainer: {
