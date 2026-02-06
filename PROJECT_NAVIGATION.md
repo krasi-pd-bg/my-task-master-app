@@ -22,7 +22,7 @@
 └────────────────┘             │  │ Home        │ │
                                │  │ Categories  │ │
                                │  │ CreateTask  │ │
-                               │  │             │ │
+                               │  │ Profile     │ │
                                │  └─────────────┘ │
                                │                  │
                                │  TaskDetails     │
@@ -32,7 +32,7 @@
 
                          {/* 
         MainTabs - Основен екран с Bottom Tabs 
-        BottomTabsNavigator съдържа: Home, Categories, Statistics, Profile
+        BottomTabsNavigator съдържа: Home, Categories, CreateTask, Profile
       */}
       <Stack.Screen 
         name="MainTabs" 
