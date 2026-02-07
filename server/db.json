@@ -93,6 +93,41 @@
       "color": "#E67E22",
       "userId": 2,
       "id": 11
+    },
+    {
+      "name": "Едно",
+      "icon": "briefcase-outline",
+      "color": "#4A90E2",
+      "userId": 2,
+      "id": 12
+    },
+    {
+      "name": "Две",
+      "icon": "briefcase-outline",
+      "color": "#E24A4A",
+      "userId": 2,
+      "id": 13
+    },
+    {
+      "name": "Три ",
+      "icon": "briefcase-outline",
+      "color": "#8E44AD",
+      "userId": 2,
+      "id": 14
+    },
+    {
+      "name": "Четири",
+      "icon": "briefcase-outline",
+      "color": "#27AE60",
+      "userId": 2,
+      "id": 15
+    },
+    {
+      "name": "Пет ",
+      "icon": "heart-outline",
+      "color": "#E67E22",
+      "userId": 2,
+      "id": 16
     }
   ]
 }
