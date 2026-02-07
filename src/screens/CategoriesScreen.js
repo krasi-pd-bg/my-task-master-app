@@ -13,11 +13,13 @@
 //     { id: 5, name: "Health", icon: "heart-outline", color: "#E67E22" },
 //   ]);
 
-//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 //   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+//   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
 //   const [selectedCategory, setSelectedCategory] = useState(null);
 
-//   // Add Category (UI only)
+//   // ADD CATEGORY (UI only)
 //   const handleSaveCategory = (newCat) => {
 //     const newCategory = {
 //       id: Date.now(),
@@ -27,20 +29,32 @@
 //     };
 
 //     setCategories((prev) => [...prev, newCategory]);
-//     setIsModalOpen(false);
+//     setIsAddModalOpen(false);
 //   };
 
-//   // Delete Category (UI only)
+//   // DELETE CATEGORY (UI only)
 //   const handleDeleteCategory = () => {
 //     setCategories((prev) => prev.filter((c) => c.id !== selectedCategory.id));
 //     setIsActionModalOpen(false);
 //   };
 
-//   // Edit Category (UI only)
+//   // EDIT CATEGORY (UI only)
 //   const handleEditCategory = () => {
-//     // Later we will open AddCategoryModal in EDIT mode
-//     // For now only close the action modal
 //     setIsActionModalOpen(false);
+//     setIsEditModalOpen(true);
+//   };
+
+//   // SAVE EDITED CATEGORY
+//   const handleSaveEditedCategory = (updatedCat) => {
+//     setCategories((prev) =>
+//       prev.map((c) =>
+//         c.id === selectedCategory.id
+//           ? { ...c, ...updatedCat }
+//           : c
+//       )
+//     );
+
+//     setIsEditModalOpen(false);
 //   };
 
 //   return (
@@ -48,6 +62,9 @@
 //       <ScrollView contentContainerStyle={styles.container}>
 
 //         <Text style={styles.heading}>Categories</Text>
+//         <Text style={styles.hintText}>
+//         Long press for more ...
+//       </Text>
 
 //         <View style={styles.grid}>
 //           {categories.map((cat) => (
@@ -72,16 +89,26 @@
 //       {/* Floating Add Button */}
 //       <TouchableOpacity
 //         style={styles.addButton}
-//         onPress={() => setIsModalOpen(true)}
+//         onPress={() => setIsAddModalOpen(true)}
 //       >
 //         <Ionicons name="add" size={32} color="#fff" />
 //       </TouchableOpacity>
 
 //       {/* Add Category Modal */}
 //       <AddCategoryModal
-//         visible={isModalOpen}
-//         onClose={() => setIsModalOpen(false)}
+//         visible={isAddModalOpen}
+//         onClose={() => setIsAddModalOpen(false)}
 //         onSave={handleSaveCategory}
+//         editMode={false}
+//       />
+
+//       {/* Edit Category Modal */}
+//       <AddCategoryModal
+//         visible={isEditModalOpen}
+//         onClose={() => setIsEditModalOpen(false)}
+//         onSave={handleSaveEditedCategory}
+//         editMode={true}
+//         initialData={selectedCategory}
 //       />
 
 //       {/* Action Modal (Edit / Delete) */}
@@ -106,11 +133,9 @@
 //             >
 //               <Text style={[styles.actionText, { color: "#555" }]}>Cancel</Text>
 //             </TouchableOpacity>
-
 //           </View>
 //         </View>
 //       </Modal>
-
 //     </View>
 //   );
 // }
@@ -124,7 +149,7 @@
 //   heading: {
 //     fontSize: 26,
 //     fontWeight: '700',
-//     marginBottom: 20,
+//     marginBottom: 5,
 //   },
 
 //   grid: {
@@ -204,22 +229,30 @@
 //     fontWeight: "600",
 //     color: "#333",
 //   },
+//   hintText: {
+//     paddingLeft: 20,
+//     textAlign: 'left',
+//     fontSize: 13,
+//     color: '#777',
+//     marginTop: 10,
+//     marginBottom: 20,
+//   },
+
 // });
 
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AddCategoryModal from '../components/AddCategoryModal';
+import { categoryService } from '../services/index';
+import { useUserContext } from '../contexts/user/UserContext';
 
 export default function CategoriesScreen() {
+  const { user } = useUserContext();
 
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Work", icon: "briefcase-outline", color: "#4A90E2" },
-    { id: 2, name: "Personal", icon: "person-outline", color: "#E24A4A" },
-    { id: 3, name: "Study", icon: "book-outline", color: "#8E44AD" },
-    { id: 4, name: "Shopping", icon: "cart-outline", color: "#27AE60" },
-    { id: 5, name: "Health", icon: "heart-outline", color: "#E67E22" },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
@@ -227,23 +260,60 @@ export default function CategoriesScreen() {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // ADD CATEGORY (UI only)
-  const handleSaveCategory = (newCat) => {
-    const newCategory = {
-      id: Date.now(),
-      name: newCat.name,
-      icon: newCat.icon,
-      color: newCat.color,
-    };
+  // Зареди категориите при mount
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
-    setCategories((prev) => [...prev, newCategory]);
-    setIsAddModalOpen(false);
+  // Зареди категориите от API
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await categoryService.getByUserId(user.id);
+      setCategories(data);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      Alert.alert('Грешка', 'Не успях да заредя категориите');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // DELETE CATEGORY (UI only)
-  const handleDeleteCategory = () => {
-    setCategories((prev) => prev.filter((c) => c.id !== selectedCategory.id));
-    setIsActionModalOpen(false);
+  // Refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadCategories();
+    setRefreshing(false);
+  };
+
+  // ADD CATEGORY (API call)
+  const handleSaveCategory = async (newCat) => {
+    try {
+      const createdCategory = await categoryService.create({
+        name: newCat.name,
+        icon: newCat.icon,
+        color: newCat.color,
+        userId: user.id,
+      });
+
+      setCategories((prev) => [...prev, createdCategory]);
+      setIsAddModalOpen(false);
+    } catch (error) {
+      console.error('Error creating category:', error);
+      Alert.alert('Грешка', 'Не успях да създам категорията');
+    }
+  };
+
+  // DELETE CATEGORY (API call)
+  const handleDeleteCategory = async () => {
+    try {
+      await categoryService.remove(selectedCategory.id);
+      setCategories((prev) => prev.filter((c) => c.id !== selectedCategory.id));
+      setIsActionModalOpen(false);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      Alert.alert('Грешка', 'Не успях да изтрия категорията');
+    }
   };
 
   // EDIT CATEGORY (UI only)
@@ -252,47 +322,70 @@ export default function CategoriesScreen() {
     setIsEditModalOpen(true);
   };
 
-  // SAVE EDITED CATEGORY
-  const handleSaveEditedCategory = (updatedCat) => {
-    setCategories((prev) =>
-      prev.map((c) =>
-        c.id === selectedCategory.id
-          ? { ...c, ...updatedCat }
-          : c
-      )
-    );
+  // SAVE EDITED CATEGORY (API call)
+  const handleSaveEditedCategory = async (updatedCat) => {
+    try {
+      const updated = await categoryService.update(selectedCategory.id, {
+        name: updatedCat.name,
+        icon: updatedCat.icon,
+        color: updatedCat.color,
+        userId: user.id,
+      });
 
-    setIsEditModalOpen(false);
+      setCategories((prev) =>
+        prev.map((c) => (c.id === selectedCategory.id ? updated : c))
+      );
+
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error('Error updating category:', error);
+      Alert.alert('Грешка', 'Не успях да обновя категорията');
+    }
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
-
-        <Text style={styles.heading}>Categories</Text>
-        <Text style={styles.hintText}>
-        Long press for more ...
-      </Text>
-
-        <View style={styles.grid}>
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat.id}
-              style={styles.card}
-              onLongPress={() => {
-                setSelectedCategory(cat);
-                setIsActionModalOpen(true);
-              }}
-            >
-              <View style={[styles.iconWrapper, { backgroundColor: cat.color }]}>
-                <Ionicons name={cat.icon} size={26} color="#fff" />
-              </View>
-              <Text style={styles.cardText}>{cat.name}</Text>
-            </TouchableOpacity>
-          ))}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4A90E2" />
+          <Text style={styles.loadingText}>Зареждам категориите...</Text>
         </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.container}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        >
+          <Text style={styles.heading}>Categories</Text>
+          <Text style={styles.hintText}>Long press for more ...</Text>
 
-      </ScrollView>
+          {categories.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="folder-open-outline" size={64} color="#ccc" />
+              <Text style={styles.emptyText}>Нямаш категории</Text>
+              <Text style={styles.emptySubtext}>Натисни + за да добавиш нова</Text>
+            </View>
+          ) : (
+            <View style={styles.grid}>
+              {categories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.id}
+                  style={styles.card}
+                  onLongPress={() => {
+                    setSelectedCategory(cat);
+                    setIsActionModalOpen(true);
+                  }}
+                >
+                  <View style={[styles.iconWrapper, { backgroundColor: cat.color }]}>
+                    <Ionicons name={cat.icon} size={26} color="#fff" />
+                  </View>
+                  <Text style={styles.cardText}>{cat.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      )}
 
       {/* Floating Add Button */}
       <TouchableOpacity
@@ -352,6 +445,39 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingBottom: 80,
+    flexGrow: 1,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 16,
+  },
+
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
   },
 
   heading: {
