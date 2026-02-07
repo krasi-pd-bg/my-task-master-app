@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system/legacy";
+import { authService } from "../../services";
 
 export default function UserProvider({ children }) {
   const [state, setState] = useState(null);
@@ -9,32 +11,50 @@ export default function UserProvider({ children }) {
     loadUser();
   }, []);
 
-  // НОВА ФУНКЦИЯ: ДобавямеProfileImage към съществуващия потребител
   const updateProfileImage = async (imageUri) => {
-    try {
-      // Създаваме нов обект с актуализираните данни
-      const updatedUser = {
-        ...state,           // Запазваме всичките стари данни (email, name, id)
-        profileImage: imageUri  // Добавяме/актуализираме снимката
-      };
-
-      setState(updatedUser);      // Обновяваме state-а
-      await saveUser(updatedUser); // Записваме в AsyncStorage
-      
-      return true; // Връщаме успех
-    } catch (error) {
-      console.error("Failed to update profile image", error);
+  try {
+    if (!state?.id) {
+      console.error("No user id in state, cannot update profile image");
       return false;
     }
-  };
 
-  // АКТУАЛИЗИРАНА ФУНКЦИЯ: Сега приема и profileImage при регистрация
-  const loginHandler = async (email, name, id, profileImage = null) => {
-    const newUser = { 
-      email, 
-      name, 
-      id,
-      profileImage // Добавяме profileImage (ще е null ако не е зададена)
+    const base64 = await FileSystem.readAsStringAsync(imageUri, {
+      encoding: "base64",
+    });
+
+    const base64Image = `data:image/jpeg;base64,${base64}`;
+
+    await authService.updateProfileImage(state.id, base64Image);
+
+    const updatedUser = {
+      ...state,
+      profileImage: base64Image,
+    };
+
+    setState(updatedUser);
+    await saveUser(updatedUser);
+
+    return true;
+  } catch (error) {
+    console.error("Failed to update profile image", error);
+    return false;
+  }
+};
+
+
+  const loginHandler = async (
+    email,
+    name,
+    userId,
+    accessToken,
+    profileImage = null
+  ) => {
+    const newUser = {
+      email,
+      name,
+      id: userId,
+      accessToken,
+      profileImage,
     };
 
     setState(newUser);
@@ -75,7 +95,7 @@ export default function UserProvider({ children }) {
     user: state,
     login: loginHandler,
     logout,
-    updateProfileImage, // НОВО: Добавяме функцията в контекста
+    updateProfileImage,
   };
 
   return (

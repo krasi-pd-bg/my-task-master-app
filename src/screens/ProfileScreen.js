@@ -92,11 +92,12 @@ export default function ProfileScreen() {
 			}
 
 			const result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ['images'], // ПРОМЕНЕНО: беше ImagePicker.MediaTypeOptions.Images
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: true,
 				aspect: [1, 1],
 				quality: 0.7,
 			});
+
 
 			if (!result.canceled) {
 				const success = await updateProfileImage(result.assets[0].uri);
@@ -110,7 +111,6 @@ export default function ProfileScreen() {
 		}
 	};
 
-	// НОВА ФУНКЦИЯ: Заснемане на снимка
 	const takePhoto = async () => {
 		try {
 			const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -125,11 +125,12 @@ export default function ProfileScreen() {
 			}
 
 			const result = await ImagePicker.launchCameraAsync({
-				mediaTypes: ['images'], // ДОБАВИ този ред ако го няма
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: true,
 				aspect: [1, 1],
 				quality: 0.7,
 			});
+
 
 			if (!result.canceled) {
 				const success = await updateProfileImage(result.assets[0].uri);
@@ -143,7 +144,6 @@ export default function ProfileScreen() {
 		}
 	};
 
-	// НОВА ФУНКЦИЯ: Показва опции за снимка
 	const showImageOptions = () => {
 		Alert.alert(
 			"Update Profile Picture",
