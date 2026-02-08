@@ -20,7 +20,13 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"edgeToEdgeEnabled": true
+			"edgeToEdgeEnabled": true,
+			"permissions": [
+				"ACCESS_FINE_LOCATION",
+				"CAMERA",
+				"READ_EXTERNAL_STORAGE",
+				"WRITE_EXTERNAL_STORAGE"
+			]
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
@@ -36,7 +42,8 @@
 			[
 				"expo-image-picker",
 				{
-					"photosPermission": "Allow app to access your photos"
+					"photosPermission": "Allow app to access your photos",
+					"cameraPermission": "Allow app to access your camera"
 				}
 			]
 		]

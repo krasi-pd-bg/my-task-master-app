@@ -58,9 +58,10 @@ export default function RegisterScreen({ navigation }) {
 
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ["images"],
+                //mediaTypes: [ImagePicker.MediaType.Images],
                 allowsEditing: true,
                 aspect: [1, 1],
-                quality: 0.7,
+                quality: 0.6,
             });
 
             if (!result.canceled) {
@@ -86,10 +87,11 @@ export default function RegisterScreen({ navigation }) {
             }
 
             const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ["images"],
+                //mediaTypes: ["images"],
+                //mediaTypes: [ImagePicker.MediaType.Images],
                 allowsEditing: true,
                 aspect: [1, 1],
-                quality: 0.7,
+                quality: 0.6,
             });
 
             if (!result.canceled) {
@@ -155,8 +157,8 @@ export default function RegisterScreen({ navigation }) {
             const result = await authService.register(email, password, name, profileImage);
 
             await login(
-                result.user.email,      // email
-                name,                   // name (от формата)
+                result.user.email,      // email (от базата данни)
+                result.user.name,       // name (от базата данни)
                 result.user.id,         // userId (ID от базата данни)
                 result.accessToken,     // accessToken (JWT токен)
                 result.user.profileImage || profileImage || null    // profileImage (Base64 или URI)

@@ -92,10 +92,12 @@ export default function ProfileScreen() {
 			}
 
 			const result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				//mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				mediaTypes: ["images"],
+				//mediaTypes: [ImagePicker.MediaType.Images],
 				allowsEditing: true,
 				aspect: [1, 1],
-				quality: 0.7,
+				quality: 0.6,
 			});
 
 
@@ -125,7 +127,9 @@ export default function ProfileScreen() {
 			}
 
 			const result = await ImagePicker.launchCameraAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				//mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				//mediaTypes: ["images"],
+				//mediaTypes: [ImagePicker.MediaType.Images],
 				allowsEditing: true,
 				aspect: [1, 1],
 				quality: 0.7,
