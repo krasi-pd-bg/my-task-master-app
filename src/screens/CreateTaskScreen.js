@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,22 @@ import {
   ScrollView,
   Modal,
   FlatList,
-  Platform
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useUserContext } from '../contexts/user/UserContext';
+import { categoryService, taskService } from '../services';
 
-export default function CreateTaskScreen() {
+export default function CreateTaskScreen({ navigation }) {
+  const { user } = useUserContext();
+
+  const [title, setTitle] = useState('');
   const [category, setCategory] = useState(null);
+  const [description, setDescription] = useState('');
+
+  const [categories, setCategories] = useState([]);
+
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const [taskDate, setTaskDate] = useState(null);
@@ -22,39 +32,99 @@ export default function CreateTaskScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const categories = [
-    "Work",
-    "Personal",
-    "Study",
-    "Shopping",
-    "Health",
-    "Other"
-  ];
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoryService.getByUserId(user.id);
+      setCategories(data);
+    } catch (err) {
+      console.log('Error loading categories:', err);
+    }
+  };
+
+  const handleCreateTask = async () => {
+    if (!title.trim()) {
+      Alert.alert('Missing title', 'Please enter a task title.');
+      return;
+    }
+
+    if (!category) {
+      Alert.alert('Missing category', 'Please select a category.');
+      return;
+    }
+
+    if (!taskDate || !taskTime) {
+      Alert.alert('Missing date/time', 'Please select date and time.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const combinedDate = new Date(taskDate);
+      combinedDate.setHours(taskTime.getHours());
+      combinedDate.setMinutes(taskTime.getMinutes());
+      combinedDate.setSeconds(0);
+      combinedDate.setMilliseconds(0);
+
+      const newTask = {
+        title: title.trim(),
+        description: description.trim(),
+        date: combinedDate.toISOString(),
+        completed: false,
+        userId: user.id,
+        category: {
+          id: category.id,
+          name: category.name,
+          icon: category.icon,
+          color: category.color
+        }
+      };
+
+      await taskService.create(newTask);
+
+      Alert.alert('Success', 'Task created successfully.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Home'),
+        },
+      ]);
+    } catch (error) {
+      console.error('Error creating task:', error);
+      Alert.alert('Error', 'Failed to create task.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.heading}>Create New Task</Text>
 
-        {/* Title */}
         <Text style={styles.label}>Title</Text>
         <TextInput
           placeholder="Enter task title"
           style={styles.input}
+          value={title}
+          onChangeText={setTitle}
         />
 
-        {/* Category */}
         <Text style={styles.label}>Category</Text>
         <TouchableOpacity
           style={styles.selector}
           onPress={() => setIsPickerOpen(true)}
         >
           <Text style={styles.selectorText}>
-            {category ? category : "Select Category"}
+            {category ? category.name : 'Select Category'}
           </Text>
         </TouchableOpacity>
 
-        {/* Custom Picker Modal */}
         <Modal visible={isPickerOpen} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
@@ -62,7 +132,7 @@ export default function CreateTaskScreen() {
 
               <FlatList
                 data={categories}
-                keyExtractor={(item) => item}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.modalItem}
@@ -71,7 +141,7 @@ export default function CreateTaskScreen() {
                       setIsPickerOpen(false);
                     }}
                   >
-                    <Text style={styles.modalItemText}>{item}</Text>
+                    <Text style={styles.modalItemText}>{item.name}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -86,26 +156,25 @@ export default function CreateTaskScreen() {
           </View>
         </Modal>
 
-        {/* Description */}
         <Text style={styles.label}>Description</Text>
         <TextInput
           placeholder="Describe your task..."
           style={[styles.input, styles.textArea]}
           multiline
+          value={description}
+          onChangeText={setDescription}
         />
 
-        {/* Date */}
         <Text style={styles.label}>Task Date</Text>
         <TouchableOpacity
           style={styles.selector}
           onPress={() => setShowDatePicker(true)}
         >
           <Text style={styles.selectorText}>
-            {taskDate ? taskDate.toLocaleDateString() : "Select Date"}
+            {taskDate ? taskDate.toLocaleDateString() : 'Select Date'}
           </Text>
         </TouchableOpacity>
 
-        {/* Time */}
         <Text style={styles.label}>Task Time</Text>
         <TouchableOpacity
           style={styles.selector}
@@ -113,18 +182,27 @@ export default function CreateTaskScreen() {
         >
           <Text style={styles.selectorText}>
             {taskTime
-              ? taskTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : "Select Time"}
+              ? taskTime.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : 'Select Time'}
           </Text>
         </TouchableOpacity>
 
-        {/* Submit */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Create Task</Text>
+        <TouchableOpacity
+          style={[styles.button, loading && { opacity: 0.7 }]}
+          onPress={handleCreateTask}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Create Task</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Date Picker */}
       {showDatePicker && (
         <DateTimePicker
           value={taskDate || new Date()}
@@ -137,7 +215,6 @@ export default function CreateTaskScreen() {
         />
       )}
 
-      {/* Time Picker */}
       {showTimePicker && (
         <DateTimePicker
           value={taskTime || new Date()}
@@ -192,7 +269,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
   },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -229,7 +305,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-
   button: {
     backgroundColor: '#4A90E2',
     padding: 16,
@@ -243,3 +318,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+

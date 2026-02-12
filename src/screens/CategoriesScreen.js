@@ -10,7 +10,6 @@ export default function CategoriesScreen() {
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
@@ -18,12 +17,12 @@ export default function CategoriesScreen() {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Зареди категориите при mount
+  // Заредени категориите при mount
   useEffect(() => {
     loadCategories();
   }, []);
 
-  // Зареди категориите от API
+  // Заредени категориите от API
   const loadCategories = async () => {
     try {
       setLoading(true);
@@ -35,13 +34,6 @@ export default function CategoriesScreen() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Refresh
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadCategories();
-    setRefreshing(false);
   };
 
   // ADD CATEGORY (API call)
@@ -109,11 +101,7 @@ export default function CategoriesScreen() {
           <Text style={styles.loadingText}>Зареждам категориите...</Text>
         </View>
       ) : (
-        <ScrollView
-          contentContainerStyle={styles.container}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-        >
+        <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.heading}>Categories</Text>
           <Text style={styles.hintText}>Long press for more ...</Text>
 

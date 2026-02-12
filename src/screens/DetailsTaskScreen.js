@@ -1,64 +1,94 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { taskService } from '../services';
 
 export default function TaskDetailsScreen({ route, navigation }) {
-  
-  // Get task data from route params
   const { task } = route.params;
+  const [taskData, setTaskData] = useState(task);
 
-  // Fallback data if no params (shouldn't happen, but good practice)
-  const taskData = task || {
-    title: "No task data",
-    category: "Unknown",
-    description: "No description available",
-    date: "N/A",
-    time: "N/A",
-    completed: false,
+  const toggleCompleted = async () => {
+    try {
+      const updated = await taskService.update(taskData.id, {
+        ...taskData,
+        completed: !taskData.completed,
+      });
+      setTaskData(updated);
+    } catch (err) {
+      Alert.alert("Error", "Failed to update task status.");
+    }
   };
 
   const handleEdit = () => {
-    // Navigate to EditTask screen and pass the task data
-    navigation.navigate('EditTask', { task: taskData });
+    navigation.navigate("EditTask", { task: taskData });
   };
 
   const handleDelete = () => {
-    // TODO: Later add API call to delete task
-    // For now, just go back and remove this screen from stack
-    navigation.pop();
+    Alert.alert(
+      "Delete Task",
+      "Are you sure you want to delete this task?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await taskService.remove(taskData.id);
+              navigation.pop();
+            } catch (err) {
+              Alert.alert("Error", "Failed to delete task.");
+            }
+          }
+        }
+      ]
+    );
   };
+
+  const formattedDate = taskData.date
+    ? new Date(taskData.date).toLocaleString()
+    : "N/A";
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        
-        {/* Status */}
+
         <View style={styles.box}>
           <Text style={styles.label}>Status</Text>
           <View style={styles.statusRow}>
-            {taskData.completed ? (
-              <Ionicons name="checkmark-circle" size={22} color="#4A90E2" />
-            ) : (
-              <Ionicons name="ellipse-outline" size={22} color="#999" />
-            )}
+            <TouchableOpacity onPress={toggleCompleted}>
+              {taskData.completed ? (
+                <Ionicons name="checkmark-circle" size={22} color="#4A90E2" />
+              ) : (
+                <Ionicons name="ellipse-outline" size={22} color="#999" />
+              )}
+            </TouchableOpacity>
             <Text style={styles.statusText}>
               {taskData.completed ? "Completed" : "Not completed"}
             </Text>
           </View>
         </View>
 
-        {/* Title */}
         <View style={styles.box}>
           <Text style={styles.label}>Title</Text>
           <Text style={styles.value}>{taskData.title}</Text>
         </View>
 
-        {/* Category */}
         <View style={styles.box}>
           <Text style={styles.label}>Category</Text>
-          <Text style={styles.value}>{taskData.category}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons
+              name={taskData.category?.icon || "pricetag-outline"}
+              size={18}
+              color={taskData.category?.color || "#777"}
+              style={{ marginRight: 6 }}
+            />
+            <Text style={[styles.value, { color: taskData.category?.color || "#222" }]}>
+              {taskData.category?.name || "Unknown"}
+            </Text>
+          </View>
         </View>
 
-        {/* Description */}
         {taskData.description && (
           <View style={styles.box}>
             <Text style={styles.label}>Description</Text>
@@ -66,23 +96,11 @@ export default function TaskDetailsScreen({ route, navigation }) {
           </View>
         )}
 
-        {/* Date */}
-        {taskData.date && (
-          <View style={styles.box}>
-            <Text style={styles.label}>Date</Text>
-            <Text style={styles.value}>{taskData.date}</Text>
-          </View>
-        )}
+        <View style={styles.box}>
+          <Text style={styles.label}>Date</Text>
+          <Text style={styles.value}>{formattedDate}</Text>
+        </View>
 
-        {/* Time */}
-        {taskData.time && (
-          <View style={styles.box}>
-            <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>{taskData.time}</Text>
-          </View>
-        )}
-
-        {/* Buttons */}
         <View style={styles.buttonsRow}>
           <TouchableOpacity 
             style={[styles.button, styles.editButton]}
@@ -105,10 +123,7 @@ export default function TaskDetailsScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    paddingBottom: 40,
-  },
+  container: { padding: 20, paddingBottom: 40 },
   box: {
     marginBottom: 18,
     padding: 15,
@@ -117,51 +132,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 6,
-  },
-  value: {
-    fontSize: 17,
-    fontWeight: '500',
-    color: '#222',
-  },
-
-  /* Status row */
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusText: {
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#222',
-  },
-
-  buttonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
-  button: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  editButton: {
-    backgroundColor: '#4A90E2',
-  },
-  deleteButton: {
-    backgroundColor: '#E24A4A',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  label: { fontSize: 14, fontWeight: '600', color: '#666', marginBottom: 6 },
+  value: { fontSize: 17, fontWeight: '500', color: '#222' },
+  statusRow: { flexDirection: 'row', alignItems: 'center' },
+  statusText: { marginLeft: 8, fontSize: 16, fontWeight: '500', color: '#222' },
+  buttonsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 30 },
+  button: { flex: 1, padding: 14, borderRadius: 10, alignItems: 'center', marginHorizontal: 5 },
+  editButton: { backgroundColor: '#4A90E2' },
+  deleteButton: { backgroundColor: '#E24A4A' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });

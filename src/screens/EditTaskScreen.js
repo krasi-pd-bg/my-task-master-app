@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,44 +8,89 @@ import {
   ScrollView,
   Modal,
   FlatList,
-  Platform
+  Alert
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { categoryService, taskService } from '../services';
+import { useUserContext } from '../contexts/user/UserContext';
 
 export default function EditTaskScreen({ route, navigation }) {
-  // Get task data from route params
+  const { user } = useUserContext();
   const { task } = route.params;
-  
-  // Initialize form with task data
-  const [title, setTitle] = useState(task?.title || "");
-  const [category, setCategory] = useState(task?.category || "");
-  const [description, setDescription] = useState(task?.description || "");
-  const [taskDate, setTaskDate] = useState(
-    task?.date ? (typeof task.date === 'string' ? new Date(task.date) : task.date) : new Date()
-  );
-  const [taskTime, setTaskTime] = useState(
-    task?.time ? (typeof task.time === 'string' ? new Date(task.time) : task.time) : new Date()
-  );
-  const [completed, setCompleted] = useState(task?.completed || false);
 
+  const [title, setTitle] = useState(task.title);
+  const [category, setCategory] = useState(task.category);
+  const [description, setDescription] = useState(task.description || "");
+
+  const [taskDate, setTaskDate] = useState(new Date(task.date));
+  const [taskTime, setTaskTime] = useState(new Date(task.date));
+
+  const [completed, setCompleted] = useState(task.completed);
+
+  const [categories, setCategories] = useState([]);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const categories = [
-    "Work",
-    "Personal",
-    "Study",
-    "Shopping",
-    "Health",
-    "Other"
-  ];
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
-  const handleSave = () => {
-    // TODO: Later add API call to update task
-    // For now, just go back to TaskDetails
-    navigation.goBack();
+  const loadCategories = async () => {
+    try {
+      const data = await categoryService.getByUserId(user.id);
+      setCategories(data);
+    } catch (err) {
+      console.log("Error loading categories:", err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!title.trim()) {
+      Alert.alert("Missing title", "Please enter a task title.");
+      return;
+    }
+
+    if (!category) {
+      Alert.alert("Missing category", "Please select a category.");
+      return;
+    }
+
+    const combinedDate = new Date(taskDate);
+    combinedDate.setHours(taskTime.getHours());
+    combinedDate.setMinutes(taskTime.getMinutes());
+    combinedDate.setSeconds(0);
+    combinedDate.setMilliseconds(0);
+
+    const updatedTask = {
+      ...task,
+      title: title.trim(),
+      description: description.trim(),
+      completed,
+      date: combinedDate.toISOString(),
+      category: {
+        id: category.id,
+        name: category.name,
+        icon: category.icon,
+        color: category.color
+      }
+    };
+
+    try {
+      const result = await taskService.update(task.id, updatedTask);
+
+      //navigation.navigate("DetailsTask", { task: result });
+      //navigation.navigate({ name: "DetailsTask", params: { task: result }, merge: true });
+    //   navigation.goBack({
+    //     task: result
+    //   });
+navigation.navigate("DetailsTask", { task: result });
+    } catch (err) {
+      console.log("Error updating task:", err);
+      Alert.alert("Error", "Failed to save changes.");
+    }
   };
 
   return (
@@ -86,9 +130,17 @@ export default function EditTaskScreen({ route, navigation }) {
           style={styles.selector}
           onPress={() => setIsPickerOpen(true)}
         >
-          <Text style={styles.selectorText}>
-            {category ? category : "Select Category"}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons
+              name={category?.icon || "pricetag-outline"}
+              size={18}
+              color={category?.color || "#777"}
+              style={{ marginRight: 6 }}
+            />
+            <Text style={[styles.selectorText, { color: category?.color || "#555" }]}>
+              {category?.name || "Select Category"}
+            </Text>
+          </View>
         </TouchableOpacity>
 
         {/* Category Picker Modal */}
@@ -99,7 +151,7 @@ export default function EditTaskScreen({ route, navigation }) {
 
               <FlatList
                 data={categories}
-                keyExtractor={(item) => item}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.modalItem}
@@ -108,7 +160,17 @@ export default function EditTaskScreen({ route, navigation }) {
                       setIsPickerOpen(false);
                     }}
                   >
-                    <Text style={styles.modalItemText}>{item}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Ionicons
+                        name={item.icon}
+                        size={18}
+                        color={item.color}
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={[styles.modalItemText, { color: item.color }]}>
+                        {item.name}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 )}
               />
@@ -140,7 +202,7 @@ export default function EditTaskScreen({ route, navigation }) {
           onPress={() => setShowDatePicker(true)}
         >
           <Text style={styles.selectorText}>
-            {taskDate ? taskDate.toLocaleDateString() : "Select Date"}
+            {taskDate.toLocaleDateString()}
           </Text>
         </TouchableOpacity>
 
@@ -151,9 +213,7 @@ export default function EditTaskScreen({ route, navigation }) {
           onPress={() => setShowTimePicker(true)}
         >
           <Text style={styles.selectorText}>
-            {taskTime
-              ? taskTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : "Select Time"}
+            {taskTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </Text>
         </TouchableOpacity>
 
@@ -167,7 +227,7 @@ export default function EditTaskScreen({ route, navigation }) {
       {/* Date Picker */}
       {showDatePicker && (
         <DateTimePicker
-          value={taskDate || new Date()}
+          value={taskDate}
           mode="date"
           display="default"
           onChange={(event, selectedDate) => {
@@ -180,7 +240,7 @@ export default function EditTaskScreen({ route, navigation }) {
       {/* Time Picker */}
       {showTimePicker && (
         <DateTimePicker
-          value={taskTime || new Date()}
+          value={taskTime}
           mode="time"
           display="default"
           onChange={(event, selectedTime) => {
@@ -204,7 +264,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 
-  /* Status */
   statusBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -302,3 +361,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+
+
