@@ -20,7 +20,7 @@ export default function TaskDetailsScreen({ route, navigation }) {
   };
 
   const handleEdit = () => {
-    navigation.navigate("EditTask", { task: taskData });
+    navigation.replace("EditTask", { task: taskData });
   };
 
   const handleDelete = () => {
