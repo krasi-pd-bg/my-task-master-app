@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUserContext } from '../contexts/user/UserContext';
 import { taskService } from '../services';
@@ -123,7 +123,11 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.loadingText}>Loading tasks...</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={loadTasks} colors={["#4A90E2"]}/>
+          }
+        >
           <Text style={styles.heading}>Today</Text>
           {todayTasks.map(renderTask)}
 

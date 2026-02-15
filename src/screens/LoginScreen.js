@@ -41,8 +41,8 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        if (trimmedPassword.length < 4) {
-            Alert.alert("Weak Password", "Password must be at least 4 characters long.");
+        if (trimmedPassword.length < 6) {
+            Alert.alert("Weak Password", "Password must be at least 6 characters long.");
             return;
         }
 
