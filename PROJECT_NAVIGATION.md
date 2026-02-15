@@ -3,7 +3,7 @@
 │              <NavigationContainer>                  │
 │                       │                             │
 │                       ▼                             │
-│               <RootAppNavigator />                      │ ← ОСНОВНА
+│               <RootAppNavigator />                  │ ← ОСНОВНА
 └─────────────────────────────────────────────────────┘
                         │
         ┌───────────────┴───────────────┐
@@ -25,91 +25,32 @@
                                │  │ Profile     │ │
                                │  └─────────────┘ │
                                │                  │
-                               │  TaskDetails     │
-                               │  AddTask         │
+                               │  DetailsTask     │
+                               │                  │
                                │  EditTask        │
                                └──────────────────┘
+     
+        Navigation Structure:
+        NavigationContainer - Главен контейнер за навигация, който обгръща цялото приложение
 
-                         {/* 
-        MainTabs - Основен екран с Bottom Tabs 
-        BottomTabsNavigator съдържа: Home, Categories, CreateTask, Profile
-      */}
-      <Stack.Screen 
-        name="MainTabs" 
-        component={BottomTabsNavigator}
-      />
+        RootAppNavigator - Основен навигатор, който избира между AuthStack и MainStack в зависимост от състоянието на потребителя (автентифициран или не)
+        Съдържа AuthStack и MainStack
 
-      {/* 
-        Modal/Detail Screens - на същото ниво като MainTabs
-        Показват се ПОВЕРХ на табовете когато navigate-нем към тях
+        MainStack - Стек навигатор за основната част на приложението
+        Съдържа MainTabs и Edit/Detail Screens
+
+        MainTabs - Навигатор с табове за основните екрани (Home, Categories, CreateTask, Profile)
+        Съдържа Home, Categories, CreateTask, Profile екрани 
+      
+        AuthStack - Стек навигатор за аутентикация
+        Съдържа Welcome, Login, Register екрани
+      
+      
+      
         
-        Примерен flow:
-        Home Tab → натискаш на task → TaskDetails екран
-        Home Tab → натискаш FAB → AddTask modal
-      */}
       
-      {/* Uncomment когато създадем екраните: */}
-      {/* 
-      <Stack.Screen 
-        name="TaskDetails" 
-        component={TaskDetailsScreen}
-        options={{
-          headerShown: true,
-          headerTitle: 'Task Details',
-          headerBackTitle: 'Back',
-          headerStyle: {
-            backgroundColor: '#FFFFFF',
-            elevation: 0,
-            shadowOpacity: 0,
-          },
-          headerTintColor: '#111827',
-        }}
-      />
       
-      <Stack.Screen 
-        name="AddTask" 
-        component={AddTaskScreen}
-        options={{
-          presentation: 'modal', // Показва се като modal отдолу
-          headerShown: true,
-          headerTitle: 'New Task',
-          headerLeft: null, // Без back бутон
-          headerRight: () => (
-            // Close бутон вместо back
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="close" size={24} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
       
-      <Stack.Screen 
-        name="EditTask" 
-        component={EditTaskScreen}
-        options={{
-          headerShown: true,
-          headerTitle: 'Edit Task',
-          headerBackTitle: 'Cancel',
-        }}
-      />
       
-      <Stack.Screen 
-        name="CategoryDetails" 
-        component={CategoryDetailsScreen}
-        options={{
-          headerShown: true,
-          headerTitle: 'Category',
-          headerBackTitle: 'Back',
-        }}
-      />
       
-      <Stack.Screen 
-        name="AddCategory" 
-        component={AddCategoryScreen}
-        options={{
-          presentation: 'modal',
-          headerShown: true,
-          headerTitle: 'New Category',
-        }}
-      />
-      */}    
+      
