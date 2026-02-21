@@ -114,10 +114,12 @@ Session is stored using **AsyncStorage** and restored automatically.
 ### **Backend:**  
 ✔ json-server  
 ✔ json-server-auth  
-✔ Persistent database (`db.json`)  
+✔ Hosted on **Render** (cloud)  
+✔ Backend repo: https://github.com/krasi-pd-bg/my-task-master-backend  
+✔ API URL: https://my-task-master-backend.onrender.com
 ✔ Real JWT authentication  
 ✔ Real CRUD operations  
-✔ Stores Base64 profile images  
+✔ Stores Base64 profile images
 
 ### **API Operations:**  
 - `GET /tasks?userId=...`  
@@ -217,10 +219,11 @@ Purpose:
 1. Clone repo: `git clone https://github.com/krasi-pd-bg/my-task-master-app`
 2. Install: `npm install`
 
-### Start the backend:
-```bash
-npm run server
-```
+### Backend:
+The backend is hosted on Render (cloud) and runs automatically.  
+No local setup needed.
+
+> ⚠️ First request may take ~30 seconds (free tier sleep mode)
 
 ### Start the app:
 ```bash
