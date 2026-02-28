@@ -1,6 +1,12 @@
 ## APK Download
 [Link to APK file]
 
+### Test Credentials
+- Email: pesho@abv.bg
+- Password: 123456
+
+---
+
 # 📱 TaskMaster  
 ### A Productivity & Task Management React Native App
 
@@ -232,6 +238,3 @@ npm start
 ## License:
 This project is created for educational purposes as part of a React Native exam assignment.
 
-### Test Credentials
-- Email: pesho@abv.bg
-- Password: 123456

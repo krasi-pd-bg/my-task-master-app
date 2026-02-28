@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useFocusEffect } from '@react-navigation/native';
 import { useUserContext } from '../contexts/user/UserContext';
 import { categoryService, taskService } from '../services';
 
@@ -34,9 +35,20 @@ export default function CreateTaskScreen({ navigation }) {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  const resetForm = () => {
+    setTitle('');
+    setCategory(null);
+    setDescription('');
+    setTaskDate(null);
+    setTaskTime(null);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      resetForm();
+      loadCategories();
+    }, [])
+  );
 
   const loadCategories = async () => {
     try {
@@ -318,4 +330,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
