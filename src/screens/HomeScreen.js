@@ -128,6 +128,7 @@ export default function HomeScreen({ navigation }) {
             <RefreshControl refreshing={loading} onRefresh={loadTasks} colors={["#4A90E2"]}/>
           }
         >
+          <Text style={styles.screenHeading}>All Tasks</Text>
           <Text style={styles.heading}>Today</Text>
           {todayTasks.map(renderTask)}
 
@@ -206,4 +207,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
+  screenHeading: {
+  fontSize: 26,
+  fontWeight: '700',
+  marginBottom: 5,
+},
 });

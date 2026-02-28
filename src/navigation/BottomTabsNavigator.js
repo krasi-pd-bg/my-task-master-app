@@ -28,7 +28,7 @@ export default function BottomTabsNavigator() {
                 options={{
                     tabBarIcon: ({ color, size }) => <Ionicons name="calendar-number-outline" size={size} color={color} />,
                     tabBarLabel: "All Tasks",
-                    headerShown: true
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
@@ -37,7 +37,7 @@ export default function BottomTabsNavigator() {
                 options={{
                     tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" size={size} color={color} />,
                     tabBarLabel: "Categories",
-                    headerShown: true
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
@@ -46,7 +46,7 @@ export default function BottomTabsNavigator() {
                 options={{
                     tabBarIcon: ({ color, size }) => <Ionicons name="create-outline" size={size} color={color} />,
                     tabBarLabel: "Create Task",
-                    headerShown: true,
+                    headerShown: false,
                     
                 }}
             />
