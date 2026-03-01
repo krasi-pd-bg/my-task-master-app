@@ -3,10 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "../contexts/user/UserContext";
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
-import * as ImagePicker from "expo-image-picker"; // НОВО
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfileScreen() {
-	const { user, logout, updateProfileImage } = useUserContext(); // НОВО: добавяме updateProfileImage
+	const { user, logout, updateProfileImage } = useUserContext();
 	const [location, setLocation] = useState(null);
 	const [address, setAddress] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -76,8 +76,7 @@ export default function ProfileScreen() {
 			setLoading(false);
 		}
 	};
-
-	// НОВА ФУНКЦИЯ: Избор на снимка от галерията
+	
 	const pickImageFromGallery = async () => {
 		try {
 			const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();

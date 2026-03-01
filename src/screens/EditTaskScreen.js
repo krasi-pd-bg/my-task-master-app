@@ -5,7 +5,6 @@ import {
 	TextInput,
 	TouchableOpacity,
 	StyleSheet,
-	ScrollView,
 	Modal,
 	FlatList,
 	Alert
@@ -14,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { categoryService, taskService } from '../services';
 import { useUserContext } from '../contexts/user/UserContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function EditTaskScreen({ route, navigation }) {
 	const { user } = useUserContext();
@@ -90,7 +90,12 @@ export default function EditTaskScreen({ route, navigation }) {
 
 	return (
 		<View style={{ flex: 1 }}>
-			<ScrollView contentContainerStyle={styles.container}>
+			<KeyboardAwareScrollView
+				contentContainerStyle={styles.container}
+				enableOnAndroid={true}
+				extraScrollHeight={40}
+				keyboardShouldPersistTaps="handled"
+			>
 
 				<Text style={styles.heading}>Edit Task</Text>
 
@@ -217,7 +222,7 @@ export default function EditTaskScreen({ route, navigation }) {
 					<Text style={styles.saveButtonText}>Save Changes</Text>
 				</TouchableOpacity>
 
-			</ScrollView>
+			</KeyboardAwareScrollView>
 
 			{/* Date Picker */}
 			{showDatePicker && (
