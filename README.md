@@ -1,5 +1,5 @@
 ## APK Download
-https://expo.dev/accounts/krasi_pd_bg/projects/my-task-master-app/builds/ae8e6150-12a3-4664-9fc7-26b6417de5b3
+https://expo.dev/artifacts/eas/nybPw7y9PqmuPqPhT6Ti3T.apk
 
 ### Test Credentials
 - Email: pesho@abv.bg
