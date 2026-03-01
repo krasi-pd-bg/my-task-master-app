@@ -235,6 +235,13 @@ No local setup needed.
 ```bash
 npm start
 ```
+### Local Backend (Optional - for development only)
+1. `npm install`
+2. `npm run server`
+3. In `.env` change:
+   `EXPO_PUBLIC_API_URL=http://192.168.1.17:3001`
+> Replace `192.168.1.17` with your local machine's IP address
+
 ## License:
 This project is created for educational purposes as part of a React Native exam assignment.
 
