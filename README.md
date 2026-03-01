@@ -1,5 +1,5 @@
 ## APK Download
-https://expo.dev/artifacts/eas/nybPw7y9PqmuPqPhT6Ti3T.apk
+https://expo.dev/artifacts/eas/gi7DX89sxEmVENY4pDPVjz.apk
 
 ### Test Credentials
 - Email: pesho@abv.bg
