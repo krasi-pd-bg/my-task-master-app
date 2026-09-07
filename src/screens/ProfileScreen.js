@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "../contexts/user/UserContext";
 import { useState, useEffect } from "react";
-import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
 import { COLORS } from "../constants/theme";
+import { locationService } from "../services";
 
 export default function ProfileScreen() {
 	const { user, logout, updateProfileImage } = useUserContext();
@@ -22,52 +22,20 @@ export default function ProfileScreen() {
 			setLoading(true);
 			setError(null);
 
-			// Request permission
-			const { status } = await Location.requestForegroundPermissionsAsync();
+			const granted = await locationService.requestLocationPermission();
 
-			if (status !== "granted") {
+			if (!granted) {
 				setError("Permission to access location was denied");
 				setLoading(false);
 				return;
 			}
 
-			// Get current position
-			const currentLocation = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.Balanced,
-			});
+			const coords = await locationService.getCurrentCoords();
+			setLocation(coords);
 
-			setLocation(currentLocation.coords);
-
-			// Reverse geocoding to get address
-			const reverseGeocode = await Location.reverseGeocodeAsync({
-				latitude: currentLocation.coords.latitude,
-				longitude: currentLocation.coords.longitude,
-			});
-
-			if (reverseGeocode.length > 0) {
-				const addr = reverseGeocode[0];
-
-				// Build detailed address with street and number
-				let addressParts = [];
-
-				if (addr.street) {
-					addressParts.push(addr.street);
-				}
-
-				if (addr.streetNumber) {
-					addressParts.push(addr.streetNumber);
-				}
-
-				if (addr.city || addr.district) {
-					addressParts.push(addr.city || addr.district);
-				}
-
-				if (addr.country) {
-					addressParts.push(addr.country);
-				}
-
-				const formattedAddress = addressParts.join(", ");
-				setAddress(formattedAddress || "Location unavailable");
+			const formattedAddress = await locationService.reverseGeocode(coords);
+			if (formattedAddress) {
+				setAddress(formattedAddress);
 			}
 
 			setLoading(false);
