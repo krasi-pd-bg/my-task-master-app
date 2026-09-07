@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { taskService } from '../services';
 
-export default function TaskDetailsScreen({ route, navigation }) {
+export default function DetailsTaskScreen({ route, navigation }) {
   const { task } = route.params;
   const [taskData, setTaskData] = useState(task);
 

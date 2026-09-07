@@ -17,10 +17,8 @@
       },
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.CAMERA"
       ]
     },
     "web": {
@@ -49,7 +47,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
