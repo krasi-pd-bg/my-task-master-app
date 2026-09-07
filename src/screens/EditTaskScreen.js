@@ -225,10 +225,11 @@ export default function EditTaskScreen({ route, navigation }) {
 					value={taskDate}
 					mode="date"
 					display="default"
-					onChange={(event, selectedDate) => {
+					onValueChange={(event, selectedDate) => {
 						setShowDatePicker(false);
-						if (selectedDate) setTaskDate(selectedDate);
+						setTaskDate(selectedDate);
 					}}
+					onDismiss={() => setShowDatePicker(false)}
 				/>
 			)}
 
@@ -238,10 +239,11 @@ export default function EditTaskScreen({ route, navigation }) {
 					value={taskTime}
 					mode="time"
 					display="default"
-					onChange={(event, selectedTime) => {
+					onValueChange={(event, selectedTime) => {
 						setShowTimePicker(false);
-						if (selectedTime) setTaskTime(selectedTime);
+						setTaskTime(selectedTime);
 					}}
+					onDismiss={() => setShowTimePicker(false)}
 				/>
 			)}
 		</View>
