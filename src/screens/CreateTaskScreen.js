@@ -16,6 +16,8 @@ import { useUserContext } from '../contexts/user/UserContext';
 import { categoryService, taskService } from '../services';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from '../constants/theme';
+import { combineDateAndTime } from '../utils/dateHelpers';
+import { validateTaskForm } from '../utils/validation';
 
 export default function CreateTaskScreen({ navigation }) {
 	const { user } = useUserContext();
@@ -61,29 +63,16 @@ export default function CreateTaskScreen({ navigation }) {
 	};
 
 	const handleCreateTask = async () => {
-		if (!title.trim()) {
-			Alert.alert('Missing title', 'Please enter a task title.');
-			return;
-		}
-
-		if (!category) {
-			Alert.alert('Missing category', 'Please select a category.');
-			return;
-		}
-
-		if (!taskDate || !taskTime) {
-			Alert.alert('Missing date/time', 'Please select date and time.');
+		const validationError = validateTaskForm({ title, category, taskDate, taskTime });
+		if (validationError) {
+			Alert.alert(validationError.title, validationError.message);
 			return;
 		}
 
 		try {
 			setLoading(true);
 
-			const combinedDate = new Date(taskDate);
-			combinedDate.setHours(taskTime.getHours());
-			combinedDate.setMinutes(taskTime.getMinutes());
-			combinedDate.setSeconds(0);
-			combinedDate.setMilliseconds(0);
+			const combinedDate = combineDateAndTime(taskDate, taskTime);
 
 			const newTask = {
 				title: title.trim(),
