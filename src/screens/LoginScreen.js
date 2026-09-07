@@ -3,7 +3,6 @@ import {
     View,
     Text,
     StyleSheet,
-    TextInput,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
@@ -14,11 +13,11 @@ import { useUserContext } from "../contexts/user/UserContext";
 import { authService } from "../services/index";
 import { COLORS } from "../constants/theme";
 import { EMAIL_REGEX } from "../constants/validation";
+import FormInput from "../components/FormInput";
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const passwordRef = useRef(null);
@@ -105,65 +104,32 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             {/* Email */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="mail-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your email"
-                        placeholderTextColor="#999"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        editable={!loading}
-                        returnKeyType="next"
-                        onSubmitEditing={() => passwordRef.current.focus()}
-                    />
-                </View>
-            </View>
+            <FormInput
+                label="Email"
+                icon="mail-outline"
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current.focus()}
+            />
 
             {/* Password */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Password</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="lock-closed-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        ref={passwordRef}
-                        style={styles.input}
-                        placeholder="Enter your password"
-                        placeholderTextColor="#999"
-                        secureTextEntry={!showPassword}
-                        value={password}
-                        onChangeText={setPassword}
-                        editable={!loading}
-                        returnKeyType="done"
-                        onSubmitEditing={loginHandler}
-                    />
-                    <TouchableOpacity
-                        onPress={() => setShowPassword(!showPassword)}
-                        style={styles.eyeIcon}
-                        disabled={loading}
-                    >
-                        <Ionicons
-                            name={showPassword ? "eye-outline" : "eye-off-outline"}
-                            size={20}
-                            color="#777"
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <FormInput
+                ref={passwordRef}
+                label="Password"
+                icon="lock-closed-outline"
+                placeholder="Enter your password"
+                secureToggle
+                value={password}
+                onChangeText={setPassword}
+                editable={!loading}
+                returnKeyType="done"
+                onSubmitEditing={loginHandler}
+            />
 
             {/* Login Button */}
             <TouchableOpacity
@@ -220,42 +186,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#666",
         marginTop: 5,
-    },
-
-    inputContainer: {
-        marginBottom: 20,
-    },
-
-    label: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#333",
-        marginBottom: 6,
-    },
-
-    inputWrapper: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 10,
-        backgroundColor: "#f9f9f9",
-        paddingHorizontal: 12,
-    },
-
-    inputIcon: {
-        marginRight: 10,
-    },
-
-    input: {
-        flex: 1,
-        paddingVertical: 12,
-        fontSize: 16,
-        color: "#333",
-    },
-
-    eyeIcon: {
-        padding: 6,
     },
 
     loginButton: {

@@ -3,7 +3,6 @@ import {
     View,
     Text,
     StyleSheet,
-    TextInput,
     TouchableOpacity,
     Alert,
     ActivityIndicator,
@@ -16,6 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 import { authService } from "../services/index.js";
 import { COLORS } from "../constants/theme";
 import { EMAIL_REGEX } from "../constants/validation";
+import FormInput from "../components/FormInput";
 
 export default function RegisterScreen({ navigation }) {
     const [formData, setFormData] = useState({
@@ -25,8 +25,6 @@ export default function RegisterScreen({ navigation }) {
         confirmPassword: "",
     });
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
 
@@ -232,122 +230,56 @@ export default function RegisterScreen({ navigation }) {
                 </View>
             </View>
 
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Name</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="person-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your name"
-                        placeholderTextColor="#999"
-                        value={formData.name}
-                        onChangeText={(text) => updateField("name", text)}
-                        editable={!loading}
-                        returnKeyType="next"
-                        onSubmitEditing={() => emailRef.current.focus()}
-                    />
-                </View>
-            </View>
+            <FormInput
+                label="Name"
+                icon="person-outline"
+                placeholder="Enter your name"
+                value={formData.name}
+                onChangeText={(text) => updateField("name", text)}
+                editable={!loading}
+                returnKeyType="next"
+                onSubmitEditing={() => emailRef.current.focus()}
+            />
 
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="mail-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        ref={emailRef}
-                        style={styles.input}
-                        placeholder="Enter your email"
-                        placeholderTextColor="#999"
-                        value={formData.email}
-                        onChangeText={(text) => updateField("email", text)}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        editable={!loading}
-                        returnKeyType="next"
-                        onSubmitEditing={() => passwordRef.current.focus()}
-                    />
-                </View>
-            </View>
+            <FormInput
+                ref={emailRef}
+                label="Email"
+                icon="mail-outline"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChangeText={(text) => updateField("email", text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current.focus()}
+            />
 
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Password</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="lock-closed-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        ref={passwordRef}
-                        style={styles.input}
-                        placeholder="Enter your password"
-                        placeholderTextColor="#999"
-                        secureTextEntry={!showPassword}
-                        value={formData.password}
-                        onChangeText={(text) => updateField("password", text)}
-                        editable={!loading}
-                        returnKeyType="next"
-                        onSubmitEditing={() => confirmRef.current.focus()}
-                    />
-                    <TouchableOpacity
-                        onPress={() => setShowPassword(!showPassword)}
-                        style={styles.eyeIcon}
-                        disabled={loading}
-                    >
-                        <Ionicons
-                            name={showPassword ? "eye-outline" : "eye-off-outline"}
-                            size={20}
-                            color="#777"
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <FormInput
+                ref={passwordRef}
+                label="Password"
+                icon="lock-closed-outline"
+                placeholder="Enter your password"
+                secureToggle
+                value={formData.password}
+                onChangeText={(text) => updateField("password", text)}
+                editable={!loading}
+                returnKeyType="next"
+                onSubmitEditing={() => confirmRef.current.focus()}
+            />
 
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Confirm Password</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons
-                        name="lock-closed-outline"
-                        size={20}
-                        color="#777"
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        ref={confirmRef}
-                        style={styles.input}
-                        placeholder="Re-enter password"
-                        placeholderTextColor="#999"
-                        secureTextEntry={!showConfirmPassword}
-                        value={formData.confirmPassword}
-                        onChangeText={(text) => updateField("confirmPassword", text)}
-                        editable={!loading}
-                        returnKeyType="done"
-                        onSubmitEditing={registerHandler}
-                    />
-                    <TouchableOpacity
-                        onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                        style={styles.eyeIcon}
-                        disabled={loading}
-                    >
-                        <Ionicons
-                            name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
-                            size={20}
-                            color="#777"
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <FormInput
+                ref={confirmRef}
+                label="Confirm Password"
+                icon="lock-closed-outline"
+                placeholder="Re-enter password"
+                secureToggle
+                value={formData.confirmPassword}
+                onChangeText={(text) => updateField("confirmPassword", text)}
+                editable={!loading}
+                returnKeyType="done"
+                onSubmitEditing={registerHandler}
+            />
 
             <TouchableOpacity
                 style={[styles.registerButton, loading && { opacity: 0.7 }]}
@@ -466,40 +398,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
 
-    inputContainer: {
-        marginBottom: 20,
-    },
-
     label: {
         fontSize: 16,
         fontWeight: "600",
         color: "#333",
         marginBottom: 6,
-    },
-
-    inputWrapper: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 10,
-        backgroundColor: "#f9f9f9",
-        paddingHorizontal: 12,
-    },
-
-    inputIcon: {
-        marginRight: 10,
-    },
-
-    input: {
-        flex: 1,
-        paddingVertical: 12,
-        fontSize: 16,
-        color: "#333",
-    },
-
-    eyeIcon: {
-        padding: 6,
     },
 
     registerButton: {
