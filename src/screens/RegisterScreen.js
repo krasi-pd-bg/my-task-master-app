@@ -11,11 +11,11 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useUserContext } from "../contexts/user/UserContext";
-import * as ImagePicker from "expo-image-picker";
 import { authService } from "../services/index.js";
 import { COLORS } from "../constants/theme";
 import { EMAIL_REGEX } from "../constants/validation";
 import FormInput from "../components/FormInput";
+import { useImagePicker } from "../hooks/useImagePicker";
 
 export default function RegisterScreen({ navigation }) {
     const [formData, setFormData] = useState({
@@ -42,82 +42,9 @@ export default function RegisterScreen({ navigation }) {
         return EMAIL_REGEX.test(value);
     };
 
-    const pickImageFromGallery = async () => {
-        try {
-            const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-            if (!permissionResult.granted) {
-                Alert.alert(
-                    "Permission Required",
-                    "Please allow access to your photos to select a profile picture.",
-                    [{ text: "OK" }]
-                );
-                return;
-            }
-
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ["images"],
-                //mediaTypes: [ImagePicker.MediaType.Images],
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.6,
-            });
-
-            if (!result.canceled) {
-                setProfileImage(result.assets[0].uri);
-            }
-        } catch (error) {
-            console.error("Error picking image:", error);
-            Alert.alert("Error", "Failed to pick image. Please try again.");
-        }
-    };
-
-    const takePhoto = async () => {
-        try {
-            const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-            if (!permissionResult.granted) {
-                Alert.alert(
-                    "Permission Required",
-                    "Please allow access to your camera to take a profile picture.",
-                    [{ text: "OK" }]
-                );
-                return;
-            }
-
-            const result = await ImagePicker.launchCameraAsync({
-                //mediaTypes: ["images"],
-                //mediaTypes: [ImagePicker.MediaType.Images],
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.6,
-            });
-
-            if (!result.canceled) {
-                setProfileImage(result.assets[0].uri);
-            }
-        } catch (error) {
-            console.error("Error taking photo:", error);
-            Alert.alert("Error", "Failed to take photo. Please try again.");
-        }
-    };
-
-    const showImageOptions = () => {
-        Alert.alert("Profile Picture", "Choose an option", [
-            {
-                text: "Take Photo",
-                onPress: takePhoto,
-            },
-            {
-                text: "Choose from Gallery",
-                onPress: pickImageFromGallery,
-            },
-            {
-                text: "Cancel",
-                style: "cancel",
-            },
-        ]);
-    };
+    const { showImageOptions } = useImagePicker({
+        onPicked: (uri) => setProfileImage(uri),
+    });
 
     const registerHandler = async () => {
         const name = formData.name.trim();

@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "../contexts/user/UserContext";
 import { useState, useEffect } from "react";
-import * as ImagePicker from "expo-image-picker";
 import { COLORS } from "../constants/theme";
 import { locationService } from "../services";
+import { useImagePicker } from "../hooks/useImagePicker";
 
 export default function ProfileScreen() {
 	const { user, logout, updateProfileImage } = useUserContext();
@@ -46,96 +46,15 @@ export default function ProfileScreen() {
 		}
 	};
 	
-	const pickImageFromGallery = async () => {
-		try {
-			const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-			if (!permissionResult.granted) {
-				Alert.alert(
-					"Permission Required",
-					"Please allow access to your photos.",
-					[{ text: "OK" }]
-				);
-				return;
+	const { showImageOptions } = useImagePicker({
+		cameraQuality: 0.7,
+		onPicked: async (uri) => {
+			const success = await updateProfileImage(uri);
+			if (success) {
+				Alert.alert("Success", "Profile picture updated!");
 			}
-
-			const result = await ImagePicker.launchImageLibraryAsync({
-				//mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				mediaTypes: ["images"],
-				//mediaTypes: [ImagePicker.MediaType.Images],
-				allowsEditing: true,
-				aspect: [1, 1],
-				quality: 0.6,
-			});
-
-
-			if (!result.canceled) {
-				const success = await updateProfileImage(result.assets[0].uri);
-				if (success) {
-					Alert.alert("Success", "Profile picture updated!");
-				}
-			}
-		} catch (error) {
-			console.error("Error picking image:", error);
-			Alert.alert("Error", "Failed to update profile picture.");
-		}
-	};
-
-	const takePhoto = async () => {
-		try {
-			const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-			if (!permissionResult.granted) {
-				Alert.alert(
-					"Permission Required",
-					"Please allow access to your camera.",
-					[{ text: "OK" }]
-				);
-				return;
-			}
-
-			const result = await ImagePicker.launchCameraAsync({
-				//mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				//mediaTypes: ["images"],
-				//mediaTypes: [ImagePicker.MediaType.Images],
-				allowsEditing: true,
-				aspect: [1, 1],
-				quality: 0.7,
-			});
-
-
-			if (!result.canceled) {
-				const success = await updateProfileImage(result.assets[0].uri);
-				if (success) {
-					Alert.alert("Success", "Profile picture updated!");
-				}
-			}
-		} catch (error) {
-			console.error("Error taking photo:", error);
-			Alert.alert("Error", "Failed to update profile picture.");
-		}
-	};
-
-	const showImageOptions = () => {
-		Alert.alert(
-			"Update Profile Picture",
-			"Choose an option",
-			[
-				{
-					text: "Take Photo",
-					onPress: takePhoto,
-				},
-				{
-					text: "Choose from Gallery",
-					onPress: pickImageFromGallery,
-				},
-				{
-					text: "Cancel",
-					style: "cancel",
-				},
-			]
-		);
-	};
+		},
+	});
 
 	const handleLogout = () => {
 		logout();
