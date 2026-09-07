@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator
 import { Ionicons } from '@expo/vector-icons';
 import { useUserContext } from '../contexts/user/UserContext';
 import { taskService } from '../services';
+import { COLORS } from '../constants/theme';
 
 export default function HomeScreen({ navigation }) {
   const { user } = useUserContext();
@@ -86,7 +87,7 @@ export default function HomeScreen({ navigation }) {
         onPress={() => toggleTaskCompleted(task)}
       >
         {task.completed ? (
-          <Ionicons name="checkmark-circle" size={22} color="#4A90E2" />
+          <Ionicons name="checkmark-circle" size={22} color={COLORS.primary} />
         ) : (
           <Ionicons name="ellipse-outline" size={22} color="#999" />
         )}
@@ -119,13 +120,13 @@ export default function HomeScreen({ navigation }) {
     <View style={{ flex: 1 }}>
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4A90E2" />
+          <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>Loading tasks...</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.container}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={loadTasks} colors={["#4A90E2"]}/>
+            <RefreshControl refreshing={loading} onRefresh={loadTasks} colors={[COLORS.primary]}/>
           }
         >
           <Text style={styles.screenHeading}>All Tasks</Text>

@@ -4,6 +4,7 @@ import { useUserContext } from "../contexts/user/UserContext";
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
+import { COLORS } from "../constants/theme";
 
 export default function ProfileScreen() {
 	const { user, logout, updateProfileImage } = useUserContext();
@@ -194,7 +195,7 @@ export default function ProfileScreen() {
 					) : (
 						// Ако няма снимка - показваме иконата
 						<View style={styles.profileImageContainer}>
-							<Ionicons name="person-circle-outline" size={110} color="#4A90E2" />
+							<Ionicons name="person-circle-outline" size={110} color={COLORS.primary} />
 							<View style={styles.cameraIconOverlay}>
 								<Ionicons name="camera" size={20} color="#fff" />
 							</View>
@@ -209,12 +210,12 @@ export default function ProfileScreen() {
 				{/* Location Section */}
 				<View style={styles.locationContainer}>
 					<View style={styles.locationHeader}>
-						<Ionicons name="location-outline" size={20} color="#4A90E2" />
+						<Ionicons name="location-outline" size={20} color={COLORS.primary} />
 						<Text style={styles.locationTitle}>Current Location</Text>
 					</View>
 
 					{loading ? (
-						<ActivityIndicator size="small" color="#4A90E2" style={styles.loader} />
+						<ActivityIndicator size="small" color={COLORS.primary} style={styles.loader} />
 					) : error ? (
 						<Text style={styles.errorText}>{error}</Text>
 					) : location ? (
@@ -226,7 +227,7 @@ export default function ProfileScreen() {
 								{location.latitude.toFixed(4)}° N, {location.longitude.toFixed(4)}° E
 							</Text>
 							<TouchableOpacity style={styles.refreshButton} onPress={getLocation}>
-								<Ionicons name="refresh-outline" size={16} color="#4A90E2" />
+								<Ionicons name="refresh-outline" size={16} color={COLORS.primary} />
 								<Text style={styles.refreshText}>Refresh</Text>
 							</TouchableOpacity>
 						</View>
@@ -239,17 +240,17 @@ export default function ProfileScreen() {
 				{/* Settings Section */}
 				<View style={styles.section}>
 					<TouchableOpacity style={styles.row}>
-						<Ionicons name="settings-outline" size={22} color="#4A90E2" />
+						<Ionicons name="settings-outline" size={22} color={COLORS.primary} />
 						<Text style={styles.rowText}>Settings</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.row}>
-						<Ionicons name="notifications-outline" size={22} color="#4A90E2" />
+						<Ionicons name="notifications-outline" size={22} color={COLORS.primary} />
 						<Text style={styles.rowText}>Notifications</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.row}>
-						<Ionicons name="help-circle-outline" size={22} color="#4A90E2" />
+						<Ionicons name="help-circle-outline" size={22} color={COLORS.primary} />
 						<Text style={styles.rowText}>Help & Support</Text>
 					</TouchableOpacity>
 				</View>
@@ -288,14 +289,14 @@ const styles = StyleSheet.create({
 		height: 110,
 		borderRadius: 55,
 		borderWidth: 3,
-		borderColor: "#4A90E2",
+		borderColor: COLORS.primary,
 	},
 
 	cameraIconOverlay: {
 		position: "absolute",
 		bottom: 0,
 		right: 0,
-		backgroundColor: "#4A90E2",
+		backgroundColor: COLORS.primary,
 		width: 32,
 		height: 32,
 		borderRadius: 16,
@@ -366,7 +367,7 @@ const styles = StyleSheet.create({
 
 	refreshText: {
 		fontSize: 14,
-		color: "#4A90E2",
+		color: COLORS.primary,
 		marginLeft: 4,
 		fontWeight: "500",
 	},
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
 
 	errorText: {
 		fontSize: 14,
-		color: "#E74C3C",
+		color: COLORS.error,
 		marginTop: 4,
 	},
 
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
 	logoutButton: {
 		flexDirection: "row",
 		alignItems: "center",
-		backgroundColor: "#4A90E2",
+		backgroundColor: COLORS.primary,
 		paddingVertical: 14,
 		paddingHorizontal: 25,
 		borderRadius: 10,

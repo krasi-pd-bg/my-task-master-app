@@ -9,6 +9,8 @@ import {
   FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { CATEGORY_ICONS, CATEGORY_COLORS } from '../constants/categories';
+import { COLORS, RADIUS } from '../constants/theme';
 
 export default function AddCategoryModal({
   visible,
@@ -17,27 +19,8 @@ export default function AddCategoryModal({
   editMode = false,
   initialData = null
 }) {
-  const icons = [
-    "briefcase-outline",
-    "person-outline",
-    "book-outline",
-    "cart-outline",
-    "heart-outline",
-    "star-outline",
-    "alarm-outline",
-    "calendar-outline",
-  ];
-
-  const colors = [
-    "#4A90E2",
-    "#E24A4A",
-    "#8E44AD",
-    "#27AE60",
-    "#E67E22",
-    "#2C3E50",
-    "#16A085",
-    "#D35400",
-  ];
+  const icons = CATEGORY_ICONS;
+  const colors = CATEGORY_COLORS;
 
   const [name, setName] = useState("");
   const [selectedIcon, setSelectedIcon] = useState(icons[0]);
@@ -151,7 +134,7 @@ const styles = StyleSheet.create({
   modalBox: {
     width: "85%",
     backgroundColor: "#fff",
-    borderRadius: 14,
+    borderRadius: RADIUS.xl,
     padding: 20,
   },
   title: {
@@ -168,22 +151,22 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
     padding: 10,
     fontSize: 16,
     backgroundColor: "#fff",
   },
   iconItem: {
     padding: 10,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: COLORS.divider,
     backgroundColor: "#f7f7f7",
   },
   iconSelected: {
-    borderColor: "#4A90E2",
+    borderColor: COLORS.primary,
     backgroundColor: "#e8f1ff",
   },
   colorItem: {
@@ -205,15 +188,15 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     marginHorizontal: 5,
   },
   cancelBtn: {
-    backgroundColor: "#ccc",
+    backgroundColor: COLORS.border,
   },
   saveBtn: {
-    backgroundColor: "#4A90E2",
+    backgroundColor: COLORS.primary,
   },
   buttonText: {
     color: "#fff",

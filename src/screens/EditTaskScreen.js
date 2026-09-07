@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { categoryService, taskService } from '../services';
 import { useUserContext } from '../contexts/user/UserContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { COLORS } from '../constants/theme';
 
 export default function EditTaskScreen({ route, navigation }) {
 	const { user } = useUserContext();
@@ -106,7 +107,7 @@ export default function EditTaskScreen({ route, navigation }) {
 					onPress={() => setCompleted(!completed)}
 				>
 					{completed ? (
-						<Ionicons name="checkmark-circle" size={24} color="#4A90E2" />
+						<Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />
 					) : (
 						<Ionicons name="ellipse-outline" size={24} color="#999" />
 					)}
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
 	},
 
 	saveButton: {
-		backgroundColor: '#4A90E2',
+		backgroundColor: COLORS.primary,
 		padding: 16,
 		borderRadius: 10,
 		marginTop: 30,

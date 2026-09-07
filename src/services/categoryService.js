@@ -1,13 +1,5 @@
 import { api } from "./api.js";
-
-// Default категории които се създават при регистрация
-const DEFAULT_CATEGORIES = [
-    { name: 'Work', icon: 'briefcase-outline', color: '#4A90E2' },
-    { name: 'Personal', icon: 'person-outline', color: '#E24A4A' },
-    { name: 'Study', icon: 'book-outline', color: '#8E44AD' },
-    { name: 'Shopping', icon: 'cart-outline', color: '#27AE60' },
-    { name: 'Health', icon: 'heart-outline', color: '#E67E22' },
-];
+import { DEFAULT_CATEGORIES } from "../constants/categories.js";
 
 // Вземи всички категории
 export async function getAll() {

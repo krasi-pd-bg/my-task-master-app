@@ -12,6 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useUserContext } from "../contexts/user/UserContext";
 import { authService } from "../services/index";
+import { COLORS } from "../constants/theme";
+import { EMAIL_REGEX } from "../constants/validation";
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
@@ -23,8 +25,7 @@ export default function LoginScreen({ navigation }) {
     const { login } = useUserContext();
 
     const validateEmail = (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(value);
+        return EMAIL_REGEX.test(value);
     };
 
     const loginHandler = async () => {
@@ -98,7 +99,7 @@ export default function LoginScreen({ navigation }) {
 
             {/* Header */}
             <View style={styles.header}>
-                <Ionicons name="checkmark-done-circle" size={70} color="#4A90E2" />
+                <Ionicons name="checkmark-done-circle" size={70} color={COLORS.primary} />
                 <Text style={styles.title}>Welcome Back</Text>
                 <Text style={styles.subtitle}>Login to your account</Text>
             </View>
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
     },
 
     loginButton: {
-        backgroundColor: "#4A90E2",
+        backgroundColor: COLORS.primary,
         paddingVertical: 16,
         borderRadius: 10,
         alignItems: "center",
@@ -285,6 +286,6 @@ const styles = StyleSheet.create({
     registerLink: {
         fontSize: 15,
         fontWeight: "700",
-        color: "#4A90E2",
+        color: COLORS.primary,
     },
 });

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AddCategoryModal from '../components/AddCategoryModal';
 import { categoryService } from '../services/index';
 import { useUserContext } from '../contexts/user/UserContext';
+import { COLORS } from '../constants/theme';
 
 export default function CategoriesScreen() {
   const { user } = useUserContext();
@@ -97,8 +98,8 @@ export default function CategoriesScreen() {
     <View style={{ flex: 1 }}>
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4A90E2" />
-          <Text style={styles.loadingText}>Зареждам категориите...</Text>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Loading categories...</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.container}>
@@ -108,8 +109,8 @@ export default function CategoriesScreen() {
           {categories.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Ionicons name="folder-open-outline" size={64} color="#ccc" />
-              <Text style={styles.emptyText}>Нямаш категории</Text>
-              <Text style={styles.emptySubtext}>Натисни + за да добавиш нова</Text>
+              <Text style={styles.emptyText}>No categories yet</Text>
+              <Text style={styles.emptySubtext}>Tap + to add a new one</Text>
             </View>
           ) : (
             <View style={styles.grid}>
@@ -165,12 +166,12 @@ export default function CategoriesScreen() {
             <Text style={styles.actionTitle}>{selectedCategory?.name}</Text>
 
             <TouchableOpacity style={styles.actionBtn} onPress={handleEditCategory}>
-              <Ionicons name="create-outline" size={22} color="#4A90E2" />
+              <Ionicons name="create-outline" size={22} color={COLORS.primary} />
               <Text style={styles.actionText}>Edit</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionBtn} onPress={handleDeleteCategory}>
-              <Ionicons name="trash-outline" size={22} color="#E24A4A" />
+              <Ionicons name="trash-outline" size={22} color={COLORS.error} />
               <Text style={styles.actionText}>Delete</Text>
             </TouchableOpacity>
 
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 25,
     right: 25,
-    backgroundColor: '#4A90E2',
+    backgroundColor: COLORS.primary,
     width: 60,
     height: 60,
     borderRadius: 30,

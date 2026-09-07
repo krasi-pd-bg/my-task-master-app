@@ -14,6 +14,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useUserContext } from "../contexts/user/UserContext";
 import * as ImagePicker from "expo-image-picker";
 import { authService } from "../services/index.js";
+import { COLORS } from "../constants/theme";
+import { EMAIL_REGEX } from "../constants/validation";
 
 export default function RegisterScreen({ navigation }) {
     const [formData, setFormData] = useState({
@@ -39,8 +41,7 @@ export default function RegisterScreen({ navigation }) {
     };
 
     const validateEmail = (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(value);
+        return EMAIL_REGEX.test(value);
     };
 
     const pickImageFromGallery = async () => {
@@ -191,7 +192,7 @@ export default function RegisterScreen({ navigation }) {
             </TouchableOpacity>
 
             <View style={styles.header}>
-                <Ionicons name="checkmark-done-circle" size={70} color="#4A90E2" />
+                <Ionicons name="checkmark-done-circle" size={70} color={COLORS.primary} />
                 <Text style={styles.title}>Create Account</Text>
                 <Text style={styles.subtitle}>Sign up to get started</Text>
             </View>
@@ -215,7 +216,7 @@ export default function RegisterScreen({ navigation }) {
                                 onPress={() => setProfileImage(null)}
                                 disabled={loading}
                             >
-                                <Ionicons name="close-circle" size={24} color="#E74C3C" />
+                                <Ionicons name="close-circle" size={24} color={COLORS.error} />
                             </TouchableOpacity>
                         </View>
                     ) : (
@@ -224,7 +225,7 @@ export default function RegisterScreen({ navigation }) {
                             onPress={showImageOptions}
                             disabled={loading}
                         >
-                            <Ionicons name="camera-outline" size={40} color="#4A90E2" />
+                            <Ionicons name="camera-outline" size={40} color={COLORS.primary} />
                             <Text style={styles.addImageText}>Add Photo</Text>
                         </TouchableOpacity>
                     )}
@@ -417,7 +418,7 @@ const styles = StyleSheet.create({
         height: 120,
         borderRadius: 60,
         borderWidth: 2,
-        borderColor: "#4A90E2",
+        borderColor: COLORS.primary,
         borderStyle: "dashed",
         justifyContent: "center",
         alignItems: "center",
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
     addImageText: {
         marginTop: 8,
         fontSize: 14,
-        color: "#4A90E2",
+        color: COLORS.primary,
         fontWeight: "600",
     },
 
@@ -440,14 +441,14 @@ const styles = StyleSheet.create({
         height: 120,
         borderRadius: 60,
         borderWidth: 3,
-        borderColor: "#4A90E2",
+        borderColor: COLORS.primary,
     },
 
     changeImageButton: {
         position: "absolute",
         bottom: 0,
         right: 0,
-        backgroundColor: "#4A90E2",
+        backgroundColor: COLORS.primary,
         width: 36,
         height: 36,
         borderRadius: 18,
@@ -502,7 +503,7 @@ const styles = StyleSheet.create({
     },
 
     registerButton: {
-        backgroundColor: "#4A90E2",
+        backgroundColor: COLORS.primary,
         paddingVertical: 16,
         borderRadius: 10,
         alignItems: "center",
@@ -529,6 +530,6 @@ const styles = StyleSheet.create({
     loginLink: {
         fontSize: 15,
         fontWeight: "700",
-        color: "#4A90E2",
+        color: COLORS.primary,
     },
 });

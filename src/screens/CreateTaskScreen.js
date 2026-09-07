@@ -15,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useUserContext } from '../contexts/user/UserContext';
 import { categoryService, taskService } from '../services';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { COLORS } from '../constants/theme';
 
 export default function CreateTaskScreen({ navigation }) {
 	const { user } = useUserContext();
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 	},
 	button: {
-		backgroundColor: '#4A90E2',
+		backgroundColor: COLORS.primary,
 		padding: 16,
 		borderRadius: 10,
 		marginTop: 30,

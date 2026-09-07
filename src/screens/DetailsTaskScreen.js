@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { taskService } from '../services';
+import { COLORS } from '../constants/theme';
 
 export default function DetailsTaskScreen({ route, navigation }) {
   const { task } = route.params;
@@ -58,7 +59,7 @@ export default function DetailsTaskScreen({ route, navigation }) {
           <View style={styles.statusRow}>
             <TouchableOpacity onPress={toggleCompleted}>
               {taskData.completed ? (
-                <Ionicons name="checkmark-circle" size={22} color="#4A90E2" />
+                <Ionicons name="checkmark-circle" size={22} color={COLORS.primary} />
               ) : (
                 <Ionicons name="ellipse-outline" size={22} color="#999" />
               )}
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   statusText: { marginLeft: 8, fontSize: 16, fontWeight: '500', color: '#222' },
   buttonsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 30 },
   button: { flex: 1, padding: 14, borderRadius: 10, alignItems: 'center', marginHorizontal: 5 },
-  editButton: { backgroundColor: '#4A90E2' },
-  deleteButton: { backgroundColor: '#E24A4A' },
+  editButton: { backgroundColor: COLORS.primary },
+  deleteButton: { backgroundColor: COLORS.error },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });

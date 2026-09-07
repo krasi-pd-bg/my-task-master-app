@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { COLORS } from "../constants/theme";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
@@ -9,7 +10,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       {/* Icon */}
-      <Ionicons name="checkmark-done-circle" size={90} color="#4A90E2" />
+      <Ionicons name="checkmark-done-circle" size={90} color={COLORS.primary} />
 
       {/* Title */}
       <Text style={styles.title}>Task Master</Text>
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   },
 
   loginButton: {
-    backgroundColor: "#4A90E2",
+    backgroundColor: COLORS.primary,
   },
 
   buttonText: {
